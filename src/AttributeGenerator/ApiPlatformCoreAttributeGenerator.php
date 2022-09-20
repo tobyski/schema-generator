@@ -40,9 +40,11 @@ final class ApiPlatformCoreAttributeGenerator extends AbstractAttributeGenerator
         }
 
         $arguments = [];
-        if ($class->name() !== $localName = $class->resourceLocalName()) {
-            $arguments['shortName'] = $localName;
-        }
+        // @COREMOD
+        // if ($class->name() !== $localName = $class->resourceLocalName()) {
+        //     $arguments['shortName'] = $localName;
+        // }
+        $arguments['shortName'] = $class->name();
         $arguments['iri'] = $class->resourceUri();
         if ($class->security) {
             $arguments['security'] = $class->security;
@@ -90,13 +92,26 @@ final class ApiPlatformCoreAttributeGenerator extends AbstractAttributeGenerator
      */
     public function generatePropertyAttributes(Property $property, string $className): array
     {
-        $arguments['iri'] = $property->resourceUri();
+        $arguments = [];
+
+        if(!$property->isReadableLink) {
+            $arguments['readableLink'] = false;
+        }
+
+        if(!$property->isWritableLink) {
+            $arguments['writableLink'] = false;
+        }
 
         if ($property->security) {
             $arguments['security'] = $property->security;
+        }        
+
+        if(!$property->isCustom) {
+            $arguments['iri'] = $property->resourceUri();
         }
 
-        return $property->isCustom ? [] : [new Attribute('ApiProperty', $arguments)];
+        //@COREMOD
+        return count($arguments) == 0 ? [] : [new Attribute('ApiProperty', $arguments)];
     }
 
     /**

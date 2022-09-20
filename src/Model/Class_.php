@@ -66,6 +66,11 @@ final class Class_
         return $this->name;
     }
 
+    // @COREMOD
+    public function setName($name): void {
+        $this->name = $name;
+    }
+
     public function resource(): RdfResource
     {
         return $this->resource;
@@ -366,50 +371,67 @@ final class Class_
         }
 
         if ($useAccessors) {
-            $methods = [];
+            //@COREMOD
+
+            // default our list of methods as to what is in the template
+            $methods = $class->getMethods();
+
+            // a full list of methods we want to add based on getters/setters for properties
             foreach ($sortedProperties as $property) {
                 foreach ($property->generateNetteMethods(static function ($string) use ($inflector) {
                     return $inflector->singularize($string);
                 }, $namespace, $useDoctrineCollections, $useFluentMutators) as $method) {
-                    $methods[] = $method;
+                    // only add the method if it hasn't already been defined by our template
+                    if(!isset($methods[$method->getName()])) {
+                        $methods[$method->getName()] = $method;
+                    }
                 }
             }
 
-            $netteMethods = [];
-            foreach ($class->getMethods() as $netteMethod) {
-                $hasMethod = false;
-                foreach ($methods as $method) {
-                    if ($method->getName() === $netteMethod->getName()) {
-                        $hasMethod = true;
-                    }
-                }
-                if (!$hasMethod) {
-                    $netteMethods[] = $netteMethod;
-                }
-            }
+            $class->setMethods($methods);
 
-            foreach ($methods as $method) {
-                if (!$class->hasMethod($method->getName())) {
-                    $netteMethods[] = $method;
-                    continue;
-                }
-                $netteMethod = $class->getMethod($method->getName());
-                $netteAttributes = $netteMethod->getAttributes();
-                foreach ($method->getAttributes() as $attribute) {
-                    $hasAttribute = false;
-                    foreach ($netteMethod->getAttributes() as $netteAttribute) {
-                        if ($netteAttribute->getName() === $attribute->getName()) {
-                            $hasAttribute = true;
-                        }
-                    }
-                    if (!$hasAttribute) {
-                        $netteAttributes[] = $attribute;
-                    }
-                }
-                $method->setAttributes($netteAttributes);
-                $netteMethods[] = $method;
-            }
-            $class->setMethods($netteMethods);
+            // this code block will prioritise the generated getters and setters over our 
+            // own template functions which we do not want
+
+            // it also does a horrible wierd argument merge which doesn't make much sense
+            // and seems to duplicate it's own logic
+
+            // $netteMethods = [];
+            // foreach ($class->getMethods() as $netteMethod) {
+            //     $hasMethod = false;
+            //     foreach ($methods as $method) {
+            //         if ($method->getName() === $netteMethod->getName()) {
+            //             $hasMethod = true;
+            //         }
+            //     }
+            //     if (!$hasMethod) {
+            //         $netteMethods[] = $netteMethod;
+            //     }
+            // }
+
+            // foreach ($methods as $method) {
+            //     if (!$class->hasMethod($method->getName())) {
+            //         $netteMethods[] = $method;
+            //         continue;
+            //     }
+            //     $netteMethod = $class->getMethod($method->getName());
+            //     $netteAttributes = $netteMethod->getAttributes();
+            //     foreach ($method->getAttributes() as $attribute) {
+            //         $hasAttribute = false;
+            //         foreach ($netteMethod->getAttributes() as $netteAttribute) {
+            //             if ($netteAttribute->getName() === $attribute->getName()) {
+            //                 $hasAttribute = true;
+            //             }
+            //         }
+            //         if (!$hasAttribute) {
+            //             $netteAttributes[] = $attribute;
+            //         }
+            //     }
+            //     $method->setAttributes($netteAttributes);
+            //     $netteMethods[] = $method;
+            // }
+
+            // $class->setMethods($netteMethods);
         }
 
         return $file;

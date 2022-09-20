@@ -52,7 +52,10 @@ final class ClassParentMutator implements ClassMutatorInterface
             $parentNamespace = $this->config['types'][$class->parent()]['namespaces']['class'];
 
             if (!$class->isInNamespace($parentNamespace)) {
-                $class->addUse(new Use_($parentNamespace.'\\'.$class->parent()));
+                //$class->addUse(new Use_($parentNamespace.'\\'.$class->parent()));
+
+                // @COREMOD
+                $class->addUse(new Use_($class->parent()));
             }
         }
 

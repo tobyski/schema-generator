@@ -31,15 +31,17 @@ final class ClassIdAppender implements ClassMutatorInterface
 
     public function __invoke(Class_ $class): Class_
     {
+        // @COREMOD
+        // $config is only the ['id'] portion
         if (
             $class->isEnum()
             || $class->isEmbeddable
-            || ($class->hasParent() && 'parent' === $this->config['id']['onClass'])
-            || ($class->hasChild && 'child' === $this->config['id']['onClass'])
+            || ($class->hasParent() && 'parent' === $this->config['onClass'])
+            || ($class->hasChild && 'child' === $this->config['onClass'])
         ) {
             return $class;
         }
 
-        return $class->addProperty((new IdPropertyGenerator())($this->config['id']['generationStrategy'], $this->config['id']['writable']));
+        return $class->addProperty((new IdPropertyGenerator())($this->config['generationStrategy'], $this->config['writable'], $this->config['name']));
     }
 }

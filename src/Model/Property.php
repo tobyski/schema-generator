@@ -32,7 +32,9 @@ final class Property
     public ?array $ormColumn = null;
     public bool $isArray = false;
     public bool $isReadable = true;
+    public bool $isReadableLink = true;
     public bool $isWritable = true;
+    public bool $isWritableLink = true;
     public bool $isNullable = true;
     public bool $isUnique = false;
     public bool $isCustom = false;

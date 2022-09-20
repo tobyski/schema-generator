@@ -79,7 +79,7 @@ interface PhpTypeConverterInterface
         // DateInterval
         'http://www.w3.org/2001/XMLSchema#duration' => '\\'.\DateInterval::class,
         // mixed
-        'https://schema.org/DataType' => null,
+        'https://schema.org/DataType' => 'mixed',
     ];
 
     /**

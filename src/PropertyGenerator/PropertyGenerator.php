@@ -138,7 +138,9 @@ final class PropertyGenerator
         $schemaGeneratorProperty->ormColumn = $propertyConfig['ormColumn'] ?? null;
         $schemaGeneratorProperty->isArray = $isArray;
         $schemaGeneratorProperty->isReadable = $propertyConfig['readable'] ?? true;
+        $schemaGeneratorProperty->isReadableLink = $propertyConfig['readableLink'] ?? true;
         $schemaGeneratorProperty->isWritable = $propertyConfig['writable'] ?? true;
+        $schemaGeneratorProperty->isWritableLink = $propertyConfig['writableLink'] ?? true;
         $schemaGeneratorProperty->isNullable = $isNullable;
         $schemaGeneratorProperty->isUnique = $propertyConfig['unique'] ?? false;
         $schemaGeneratorProperty->isCustom = $isCustom;

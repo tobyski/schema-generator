@@ -34,7 +34,9 @@ final class SerializerGroupsAttributeGenerator extends AbstractAttributeGenerato
      */
     public function generatePropertyAttributes(Property $property, string $className): array
     {
-        if (false === $property->isId && $property->groups) {
+        //@COREMOD
+        //if (false === $property->isId && $property->groups) {
+        if($property->groups) {
             return [new Attribute('Groups', [$property->groups])];
         }
 
